@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -72,8 +73,13 @@ fun BottomBar(navHostController: NavHostController) {
 
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+    val cornerShape = RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp)
 
-    NavigationBar(Modifier.clip(shape = RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp))) {
+    NavigationBar(
+        modifier = Modifier
+            .shadow(10.dp, shape = cornerShape)
+            .clip(shape = cornerShape),
+    ) {
         listOfScreen.forEach {
             AddBottomBarItem(
                 route = it,
@@ -90,18 +96,24 @@ fun RowScope.AddBottomBarItem(
     currentDestination: NavDestination?,
     navHostController: NavHostController
 ) {
+    val selected = currentDestination?.hierarchy?.any {
+        it.route == route.routeId
+    } == true
+
     NavigationBarItem(
+        alwaysShowLabel = selected,
         label = {
             Text(text = route.title)
         },
         icon = {
-            Icon(imageVector = route.icon, contentDescription = route.title)
+            Icon(
+                imageVector = if (selected) route.iconSelected else route.icon,
+                contentDescription = route.title
+            )
         },
-        selected = currentDestination?.hierarchy?.any {
-            it.route == route.routeId
-        } == true,
+        selected = selected,
         onClick = {
-            navHostController.navigate(route.routeId){
+            navHostController.navigate(route.routeId) {
                 popUpTo(navHostController.graph.startDestinationId)
                 launchSingleTop = true
             }
