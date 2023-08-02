@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -21,6 +22,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -29,6 +33,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.exfarnanda1945.bottomnavigationcompose.navigation.BottomNavigationNavGraph
 import com.exfarnanda1945.bottomnavigationcompose.navigation.Route
+import com.exfarnanda1945.bottomnavigationcompose.ui.theme.BlackFlat
 import com.exfarnanda1945.bottomnavigationcompose.ui.theme.BottomNavigationComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -68,6 +73,7 @@ fun BottomBar(navHostController: NavHostController) {
     val listOfScreen = listOf(
         Route.Home,
         Route.Post,
+        Route.Mail,
         Route.Account,
     )
 
@@ -79,7 +85,9 @@ fun BottomBar(navHostController: NavHostController) {
         modifier = Modifier
             .shadow(10.dp, shape = cornerShape)
             .clip(shape = cornerShape),
-    ) {
+        containerColor = BlackFlat,
+
+        ) {
         listOfScreen.forEach {
             AddBottomBarItem(
                 route = it,
@@ -102,13 +110,21 @@ fun RowScope.AddBottomBarItem(
 
     NavigationBarItem(
         alwaysShowLabel = selected,
+        colors = NavigationBarItemDefaults.colors(indicatorColor = route.color),
         label = {
-            Text(text = route.title)
+            Text(
+                text = route.title,
+                style = TextStyle(
+                    color = route.color,
+                    fontWeight = FontWeight.SemiBold
+                ),
+            )
         },
         icon = {
             Icon(
                 imageVector = if (selected) route.iconSelected else route.icon,
-                contentDescription = route.title
+                contentDescription = route.title,
+                tint = Color.White
             )
         },
         selected = selected,
